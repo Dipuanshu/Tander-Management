@@ -47,13 +47,16 @@ export default function SignIn() {
           onSubmit={async (values, { setSubmitting }) => {
             const email = values.email;
             const password = values.password;
-            let result = await fetch("http://localhost:5000/login", {
-              method: "post",
-              body: JSON.stringify({ email, password }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
+            let result = await fetch(
+              "https://tender-backend-8k7t.onrender.com/login",
+              {
+                method: "post",
+                body: JSON.stringify({ email, password }),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
             result = await result.json();
             console.log(result);
             if (result.auth) {

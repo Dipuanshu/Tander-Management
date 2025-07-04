@@ -12,6 +12,7 @@ export default function TenderList() {
       .then((res) => setTenders(res.data))
       .catch((err) => console.error(err));
   }, []);
+  const userId = localStorage.getItem("userId");
 
   return (
     <div className="max-w-4xl mx-auto mt-10">
@@ -39,12 +40,14 @@ export default function TenderList() {
             >
               View
             </Link>
-            <Link
-              to={`/tender/${tender._id}/edit`}
-              className="text-green-600 underline"
-            >
-              Edit
-            </Link>
+            {tender.isPublic != true && (
+              <Link
+                to={`/tender/${tender._id}/edit`}
+                className="text-green-600 underline"
+              >
+                Edit
+              </Link>
+            )}
           </div>
         </div>
       ))}

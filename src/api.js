@@ -4,7 +4,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/",
+  baseURL: "https://tender-backend-8k7t.onrender.com",
 });
 
 // Add JWT token in headers if exists

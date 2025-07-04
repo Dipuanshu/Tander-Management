@@ -73,7 +73,6 @@ export default function Profile() {
         <div className="relative">
           <img
             src={preview}
-            alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-blue-600 object-cover"
           />
           <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700">

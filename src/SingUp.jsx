@@ -32,21 +32,27 @@ export default function SignUp() {
         const data = new FormData();
         data.append("file", profilePic);
 
-        const uploadRes = await fetch("http://localhost:5000/upload", {
-          method: "POST",
-          body: data,
-        });
+        const uploadRes = await fetch(
+          "https://tender-backend-8k7t.onrender.com/upload",
+          {
+            method: "POST",
+            body: data,
+          }
+        );
         const uploadData = await uploadRes.json();
         profilePicUrl = uploadData.url;
       }
 
       const payload = { ...values, profilePic: profilePicUrl };
 
-      const res = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "https://tender-backend-8k7t.onrender.com/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const result = await res.json();
 
@@ -57,7 +63,7 @@ export default function SignUp() {
         localStorage.setItem("userName", result.result.name);
         localStorage.setItem("userPic", result.result.profilePic);
         localStorage.setItem("token", result.auth);
-        localStorage.setItem("email", result.users.email);
+        localStorage.setItem("email", result.result.email);
         resetForm();
         navigate("/dashboard");
       } else {
