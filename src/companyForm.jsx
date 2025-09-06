@@ -32,7 +32,6 @@ export default function CompanyForm({ companyId }) {
     setLogoFile(e.target.files[0]);
   };
 
-
   const uploadLogo = async () => {
     if (!logoFile) return "";
 

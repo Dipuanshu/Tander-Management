@@ -35,6 +35,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-companies" element={<MyCompanies />} />
         <Route path="/companies" element={<SearchCompanies />} />
+        <Route path="/company/:id/edit" element={<CompanyForm />} />
       </Routes>
     </div>
   );
