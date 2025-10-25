@@ -3,16 +3,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "./api";
-import { Pencil, UploadCloud, Save } from "lucide-react";
+import { Pencil, UploadCloud, Save, Loader2 } from "lucide-react";
 
 export default function Profile() {
   const navigate = useNavigate();
 
-  // Get from localStorage (ya API se future me)
-  const [name, setName] = useState(localStorage.getItem("name"));
+  const [name, setName] = useState(localStorage.getItem("userName"));
   const [email, setEmail] = useState(localStorage.getItem("email"));
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(
     localStorage.getItem("userPic") ||
       "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
@@ -31,26 +31,35 @@ export default function Profile() {
 
   const uploadImage = async () => {
     if (!file) return preview;
-    const data = new FormData();
-    data.append("file", file);
-    const res = await API.post("/upload", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return res.data.url;
+
+    try {
+      setUploading(true);
+      const data = new FormData();
+      data.append("file", file);
+      const res = await API.post("/upload", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const imageUrl = res.data.url;
+
+      // Save uploaded image
+      localStorage.setItem("userPic", imageUrl);
+      setPreview(imageUrl);
+      setFile(null);
+      setUploading(false);
+      setStatus("Profile picture updated successfully!");
+      setTimeout(() => setStatus(""), 1500);
+    } catch (err) {
+      console.error(err);
+      setUploading(false);
+      setStatus("Image upload failed!");
+      setTimeout(() => setStatus(""), 1500);
+    }
   };
 
   const handleSave = async () => {
     setStatus("Saving...");
-    let imageUrl = preview;
-
-    if (file) {
-      imageUrl = await uploadImage();
-    }
-
-    // LocalStorage update (real app me backend call)
-    localStorage.setItem("user", name);
-    localStorage.setItem("userEmail", email);
-    localStorage.setItem("userPic", imageUrl);
+    localStorage.setItem("userName", name);
+    localStorage.setItem("email", email);
 
     setStatus("Updated!");
     setEditName(false);
@@ -63,19 +72,19 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 bg-white shadow-xl rounded-xl p-8">
+    <div className="max-w-md mx-auto mt-12 bg-white shadow-xl rounded-xl p-8 relative overflow-hidden">
       <h2 className="text-3xl font-extrabold mb-6 text-center text-blue-700">
         My Profile
       </h2>
 
       {/* Profile Pic */}
       <div className="flex flex-col items-center mb-6">
-        <div className="relative">
+        <div className="relative group">
           <img
             src={preview}
-            className="w-32 h-32 rounded-full border-4 border-blue-600 object-cover"
+            className="w-32 h-32 rounded-full border-4 border-blue-600 object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700">
+          <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700 shadow-lg transition-all duration-300">
             <UploadCloud className="text-white" size={20} />
             <input
               type="file"
@@ -85,6 +94,27 @@ export default function Profile() {
             />
           </label>
         </div>
+
+        {/* ✅ Upload button appears dynamically when file is selected */}
+        {file && (
+          <button
+            onClick={uploadImage}
+            disabled={uploading}
+            className={`mt-4 flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-full font-semibold shadow-md transition-all duration-300 hover:bg-green-700 ${
+              uploading ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+          >
+            {uploading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" /> Uploading...
+              </>
+            ) : (
+              <>
+                <UploadCloud size={18} /> Upload
+              </>
+            )}
+          </button>
+        )}
       </div>
 
       {/* User Details */}
@@ -155,7 +185,13 @@ export default function Profile() {
       </div>
 
       {status && (
-        <p className="text-center text-green-600 mt-4 font-medium">{status}</p>
+        <p
+          className={`text-center mt-4 font-medium ${
+            status.includes("failed") ? "text-red-600" : "text-green-600"
+          }`}
+        >
+          {status}
+        </p>
       )}
     </div>
   );

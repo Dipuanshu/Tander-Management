@@ -3,8 +3,10 @@
 // src/components/CompanyForm.jsx
 import { useState, useEffect } from "react";
 import API from "./api";
+import { useNavigate } from "react-router-dom";
 
 export default function CompanyForm({ companyId }) {
+  const Nevigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     industry: "",
@@ -65,6 +67,7 @@ export default function CompanyForm({ companyId }) {
           },
         });
         setStatus("Updated successfully!");
+        Nevigate("/my-companies");
       } else {
         await API.post("/create", payload, {
           headers: {
@@ -72,6 +75,7 @@ export default function CompanyForm({ companyId }) {
           },
         });
         setStatus("Created successfully!");
+        Nevigate("/my-companies");
         setForm({
           name: "",
           industry: "",

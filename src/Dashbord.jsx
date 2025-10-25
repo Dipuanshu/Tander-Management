@@ -15,7 +15,7 @@ export default function Dashboard() {
       ? localStorage.getItem("userPic")
       : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
-  const userName = localStorage.getItem("user");
+  const userName = localStorage.getItem("userName");
 
   const handleLogout = () => {
     localStorage.clear();
